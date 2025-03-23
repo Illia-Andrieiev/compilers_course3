@@ -1,0 +1,5 @@
+let
+in
+	print("Hello World!\n")
+end
+
