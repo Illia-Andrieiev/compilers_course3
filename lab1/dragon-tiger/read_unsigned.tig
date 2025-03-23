@@ -1,0 +1,28 @@
+let
+    /* Read a positive integer from the standard input.
+       Returns -1 on error */
+    function read_unsigned() : int =
+    let
+	var is_continue : int := 1
+        var symbol : string := ""
+	var result : int := 0
+    in
+        while is_continue do
+        (
+            symbol := getchar();
+            if symbol = "" | symbol = "\n" then
+		is_continue := 0
+	    else if ord(symbol) > 47 & ord(symbol) < 58 then
+	         result := result * 10 + (ord(symbol) - ord("0"))
+	    else (
+                result := -1;
+		is_continue := 0	 
+    	    )
+        );
+	result
+    end
+    var a : int := read_unsigned()
+in
+    print_int(a * 2);
+    print("\n")
+end
