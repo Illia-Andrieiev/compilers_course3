@@ -87,6 +87,20 @@ var      return yy::tiger_parser::make_VAR(loc);
  /* Identifiers */
 {id}       return yy::tiger_parser::make_ID(Symbol(yytext), loc);
 
+[0-9]+ {
+    errno = 0;
+    char* endptr = nullptr;
+    long value = strtol(yytext, &endptr, 10);
+
+    if (errno == ERANGE || value > TIGER_INT_MAX || *endptr != '\0')
+    {
+        utils::error(loc, "invalid or out-of-range integer literal: " + std::string(yytext));
+    }
+
+    return yy::tiger_parser::make_INT(static_cast<int>(value), loc);
+}
+
+
  /* Strings */
 \" {BEGIN(STRING); string_buffer.clear();}
 
