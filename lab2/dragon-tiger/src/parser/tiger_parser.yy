@@ -100,13 +100,18 @@ using utils::nl;
 
 %type <boost::optional<Symbol>> typeannotation;
 
-%%
+
 
 // Declare precedence rules
 
 %nonassoc FUNCTION VAR TYPE DO OF ASSIGN;
-%left UMINUS;
+%left OR
+%left AND
+%left PLUS MINUS        // + -
+%left TIMES DIVIDE      // * /
+%right UMINUS     
 
+%%
 // Declare grammar rules and production actions
 
 %start program;
