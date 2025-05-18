@@ -6,7 +6,26 @@
 #include "nodes.hh"
 
 namespace ast {
+class Evaluator : public ConstASTIntVisitor {
+public:
+  int32_t result;
 
+  int32_t visit(const IntegerLiteral& literal) override;
+  int32_t visit(const BinaryOperator& binop) override;
+  int32_t visit(const Sequence& seq) override;
+  int32_t visit(const IfThenElse& ite) override;
+
+  int32_t visit(const StringLiteral& str) override;
+  int32_t visit(const Identifier& id) override;
+  int32_t visit(const Let& let) override;
+  int32_t visit(const FunCall& call) override;
+  int32_t visit(const WhileLoop& loop) override;
+  int32_t visit(const ForLoop& loop) override;
+  int32_t visit(const Break& brk) override;
+  int32_t visit(const Assign& assign) override;
+  int32_t visit(const VarDecl& decl) override;
+  int32_t visit(const FunDecl& decl) override;
+};
 class ASTDumper : public ConstASTVisitor {
   std::ostream *ostream;
   bool verbose;

@@ -15,6 +15,7 @@ int main(int argc, char **argv) {
   ("trace-parser", "enable parser traces")
   ("trace-lexer", "enable lexer traces")
   ("verbose,v", "be verbose")
+  ("eval,e", "evaluate expression")
   ("input-file", po::value(&input_files), "input Tiger file");
 
   po::positional_options_description positional;
@@ -47,6 +48,11 @@ int main(int argc, char **argv) {
     ast::ASTDumper dumper(&std::cout, vm.count("verbose") > 0);
     parser_driver.result_ast->accept(dumper);
     dumper.nl();
+  }
+  if (vm.count("e") || vm.count("eval")) {
+    ast::Evaluator eval;
+    int32_t res = parser_driver.result_ast->accept(eval);
+    std::cout << res << std::endl;
   }
   delete parser_driver.result_ast;
   return 0;

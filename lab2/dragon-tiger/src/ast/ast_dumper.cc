@@ -18,7 +18,109 @@ char const * const get_type_name(ast::Type t) {
 
 
 namespace ast {
+int32_t Evaluator::visit(const IntegerLiteral& literal) {
+  result = literal.value;
+  return result;
+}
 
+int32_t Evaluator::visit(const BinaryOperator& binop) {
+  int lhs, rhs;
+  binop.get_left().accept(*this);
+  lhs = result;
+  binop.get_right().accept(*this);
+  rhs = result;
+
+  switch (binop.op) {
+    case types::Operator::o_plus:   result = lhs + rhs; break;
+    case types::Operator::o_minus:  result = lhs - rhs; break;
+    case types::Operator::o_times:  result = lhs * rhs; break;
+    case types::Operator::o_divide:
+      if (rhs == 0) utils::error("division by zero");
+      result = lhs / rhs;
+      break;
+    case types::Operator::o_eq:     result = (lhs == rhs) ? 1 : 0; break;
+    case types::Operator::o_lt:     result = (lhs < rhs) ? 1 : 0; break;
+    case types::Operator::o_gt:     result = (lhs > rhs) ? 1 : 0; break;
+    case types::Operator::o_le:     result = (lhs <= rhs) ? 1 : 0; break;
+    case types::Operator::o_ge:     result = (lhs >= rhs) ? 1 : 0; break;
+    default:
+      utils::error("unsupported binary operator");
+  }
+  return result;
+}
+
+int32_t Evaluator::visit(const Sequence& seq) {
+  const auto& exprs = seq.get_exprs();
+  if (exprs.empty())
+    utils::error("empty sequence expression");
+
+  for (const auto& expr : exprs) {
+    expr->accept(*this);
+  }
+  return result;
+}
+
+int32_t Evaluator::visit(const IfThenElse& ite) {
+  ite.get_condition().accept(*this);
+  if (result != 0) {
+    ite.get_then_part().accept(*this);
+  } else {
+    ite.get_else_part().accept(*this);
+  }
+  return result;
+}
+
+// Unsupported expressions
+
+int32_t Evaluator::visit(const StringLiteral&) {
+  utils::error("cannot evaluate string literal");
+  return result;
+}
+
+int32_t Evaluator::visit(const Identifier&) {
+  utils::error("cannot evaluate identifier");
+  return result;
+}
+
+int32_t Evaluator::visit(const Let&) {
+  utils::error("cannot evaluate let expression");
+  return result;
+}
+
+int32_t Evaluator::visit(const FunCall&) {
+  utils::error("cannot evaluate function call");
+  return result;
+}
+
+int32_t Evaluator::visit(const WhileLoop&) {
+  utils::error("cannot evaluate while loop");
+  return result;
+}
+
+int32_t Evaluator::visit(const ForLoop&) {
+  utils::error("cannot evaluate for loop");
+  return result;
+}
+
+int32_t Evaluator::visit(const Break&) {
+  utils::error("cannot evaluate break statement");
+  return result;
+}
+
+int32_t Evaluator::visit(const Assign&) {
+  utils::error("cannot evaluate assignment");
+  return result;
+}
+
+int32_t Evaluator::visit(const VarDecl&) {
+  utils::error("cannot evaluate variable declaration");
+  return result;
+}
+
+int32_t Evaluator::visit(const FunDecl&) {
+  utils::error("cannot evaluate function declaration");
+  return result;
+}
 void ASTDumper::visit(const IntegerLiteral &literal) {
   *ostream << literal.value;
 }
