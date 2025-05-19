@@ -7,6 +7,5 @@ let
 		else
 			fibonacci(n-1) + fibonacci(n-2)
 in
-	for i := 1 to 8 do
-		(print_int(fibonacci(i)); print("\n"))
+		(print_int(fibonacci(45)); print("\n"))
 end
